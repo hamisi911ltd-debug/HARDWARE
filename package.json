@@ -1,0 +1,45 @@
+{
+  "name": "hardware-hub",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "db:migrate": "wrangler d1 migrations apply hardware-hub --local",
+    "db:seed": "wrangler d1 execute hardware-hub --local --file=db/seed.sql && wrangler d1 execute hardware-hub --local --file=db/demo.sql",
+    "db:setup": "npm run db:migrate && npm run db:seed",
+    "db:migrate:remote": "wrangler d1 migrations apply hardware-hub --remote",
+    "db:seed:remote": "wrangler d1 execute hardware-hub --remote --file=db/seed.sql",
+    "db:demo:remote": "wrangler d1 execute hardware-hub --remote --file=db/demo.sql",
+    "db:demo:remote": "wrangler d1 execute hardware-hub --remote --file=db/demo.sql",
+    "test:api": "node tests/api.test.mjs",
+    "test:business": "node tests/business.test.mjs",
+    "test:ui": "node tests/ui.mjs",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "dependencies": {
+    "@fontsource-variable/archivo": "^5.3.0",
+    "@fontsource-variable/instrument-sans": "^5.3.0",
+    "hono": "^4.13.14",
+    "lucide-react": "^1.65.0",
+    "motion": "^14.9.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.18.5"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.66.0",
+    "@cloudflare/workers-types": "^5.20261030.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "playwright": "^1.64.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "wrangler": "^4.156.0"
+  }
+}

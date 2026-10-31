@@ -1,0 +1,346 @@
+@import "tailwindcss";
+@import "@fontsource-variable/archivo/wdth.css";
+@import "@fontsource-variable/instrument-sans/index.css";
+
+@theme {
+  --color-page: #f2f5fa;
+  --color-surface: #ffffff;
+  --color-ink: #071a3a;
+  --color-navy: #0c2a5e;
+  --color-line: rgb(12 42 94 / 0.13);
+  --color-fg: #0c1f40;
+  --color-muted: #566682;
+  --color-brand: #0b63ce;
+  --color-brand-soft: #0a56b4;
+  --color-brand-deep: #0b63ce;
+  --color-red: #d81f26;
+  --color-red-soft: #c9151c;
+  --color-good: #12803c;
+  --color-warn: #a85a06;
+  --color-bad: #cf2027;
+  --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Archivo Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  background: var(--color-page);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100svh;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-brand);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+/* Anything on a photo, video or navy band. The colour tokens flip here, so every utility inside follows. */
+.on-dark {
+  --color-fg: #ffffff;
+  --color-muted: #c3d0e4;
+  --color-line: rgb(255 255 255 / 0.2);
+  --color-brand: #6cbcff;
+  --color-brand-soft: #a7d6ff;
+  --color-red-soft: #ff9ea1;
+  --color-good: #4ade80;
+  --color-warn: #fcc34a;
+  --color-bad: #fb8a8a;
+  color: var(--color-fg);
+}
+
+/* Soft colour behind the page, which gives the glass panels something to blur. */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora::before,
+.aurora::after {
+  content: "";
+  position: absolute;
+  width: 55vmax;
+  height: 55vmax;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.16;
+  animation: drift 26s ease-in-out infinite alternate;
+}
+.aurora::before {
+  top: -20vmax;
+  left: -15vmax;
+  background: #4da3ff;
+}
+.aurora::after {
+  bottom: -25vmax;
+  right: -15vmax;
+  background: #ff7a7f;
+  animation-delay: -12s;
+}
+@keyframes drift {
+  to {
+    transform: translate3d(12vmax, 8vmax, 0) scale(1.15);
+  }
+}
+
+/* In a layer so Tailwind utilities (hidden, w-full, ...) can override these. */
+@layer components {
+.glass {
+  background: linear-gradient(145deg, rgb(255 255 255 / 0.82), rgb(255 255 255 / 0.62));
+  border: 1px solid rgb(255 255 255 / 0.7);
+  box-shadow: 0 1px 2px rgb(12 42 94 / 0.05), 0 18px 40px -26px rgb(12 42 94 / 0.35);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+}
+.glass-strong {
+  background: rgb(255 255 255 / 0.88);
+  border: 1px solid rgb(255 255 255 / 0.75);
+  box-shadow: 0 12px 34px -18px rgb(12 42 94 / 0.45);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+  backdrop-filter: blur(22px) saturate(170%);
+}
+.on-dark .glass {
+  background: linear-gradient(145deg, rgb(255 255 255 / 0.17), rgb(255 255 255 / 0.06));
+  border-color: rgb(255 255 255 / 0.24);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.2), 0 18px 40px -22px rgb(0 0 0 / 0.7);
+}
+.on-dark .glass-strong {
+  background: rgb(9 30 66 / 0.72);
+  border-color: rgb(255 255 255 / 0.18);
+}
+/* Plain white card for working screens, where blur would only slow things down. */
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px rgb(12 42 94 / 0.04);
+}
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  box-shadow: 0 1px 2px rgb(12 42 94 / 0.05);
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.card:hover {
+  border-color: rgb(11 99 206 / 0.35);
+  box-shadow: 0 22px 44px -26px rgb(12 42 94 / 0.45);
+}
+
+.display {
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  text-wrap: balance;
+}
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-red-soft);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.6rem 1.15rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.925rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-primary {
+  background: #0b63ce;
+  color: #fff;
+  box-shadow: 0 10px 24px -12px rgb(11 99 206 / 0.9);
+}
+.btn-primary:hover:not(:disabled) {
+  background: #0a56b4;
+}
+.btn-red {
+  background: var(--color-red);
+  color: #fff;
+  box-shadow: 0 10px 24px -12px rgb(216 31 38 / 0.9);
+}
+.btn-red:hover:not(:disabled) {
+  background: #bd1a20;
+}
+.btn-whatsapp {
+  background: #25d366;
+  color: #04220f;
+  box-shadow: 0 10px 24px -12px rgb(37 211 102 / 0.8);
+}
+.btn-whatsapp:hover:not(:disabled) {
+  background: #3be27a;
+}
+.btn-ghost {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  color: var(--color-fg);
+}
+.btn-ghost:hover:not(:disabled) {
+  border-color: rgb(11 99 206 / 0.5);
+}
+.on-dark .btn-ghost {
+  background: rgb(255 255 255 / 0.12);
+}
+.on-dark .btn-ghost:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.22);
+}
+.btn-sm {
+  min-height: 2.25rem;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.82rem;
+  border-radius: 0.6rem;
+}
+
+.input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 0.7rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  color: var(--color-fg);
+  /* 16px stops iOS Safari zooming in when a field is focused. */
+  font-size: 1rem;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.input::placeholder {
+  color: #7d8ba3;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgb(11 99 206 / 0.18);
+}
+.input:disabled {
+  background: rgb(12 42 94 / 0.05);
+}
+
+/* Stands in for a product photo: a blueprint sheet with the item drawn on it. */
+.blueprint {
+  background-color: #0c2f6b;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.07) 1px, transparent 1px),
+    radial-gradient(circle at 25% 15%, #1a64c8, transparent 65%);
+  background-size: 22px 22px, 22px 22px, 100% 100%;
+}
+}
+
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+}
+.marquee-wrap:hover .marquee {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.shimmer {
+  background: linear-gradient(100deg, rgb(12 42 94 / 0.05) 30%, rgb(12 42 94 / 0.11) 50%, rgb(12 42 94 / 0.05) 70%);
+  background-size: 220% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+@keyframes shimmer {
+  to {
+    background-position: -220% 0;
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+dialog {
+  margin: auto;
+  color: inherit;
+  background: transparent;
+  max-height: 92svh;
+  width: min(100% - 1.5rem, 34rem);
+}
+dialog::backdrop {
+  background: rgb(7 26 58 / 0.5);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.pb-tabs {
+  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+}
+@media (min-width: 768px) {
+  .pb-tabs {
+    padding-bottom: 0;
+  }
+}
+
+/* Receipts and day sheets print on their own, without the menus. */
+@media print {
+  html,
+  body {
+    background: #fff;
+  }
+  aside,
+  nav,
+  .no-print,
+  .aurora {
+    display: none !important;
+  }
+  main {
+    padding: 0 !important;
+  }
+  .panel {
+    border: 0;
+    box-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .aurora::before,
+  .aurora::after,
+  .marquee,
+  .shimmer {
+    animation: none;
+  }
+}
