@@ -38,7 +38,7 @@ export function Enquiries() {
       <h1 className="font-display text-2xl font-extrabold tracking-tight sm:text-3xl">Enquiries</h1>
       <div className="mt-4 inline-flex gap-1 rounded-xl bg-fg/6 p-1 text-xs font-semibold">
         {[["open", "Open"], ["closed", "Closed"], ["all", "All"]].map(([v, l]) => (
-          <button key={v} onClick={() => setFilter(v)} className={`rounded-lg px-3 py-1.5 ${filter === v ? "bg-fg/8" : "text-muted"}`}>{l}</button>
+          <button key={v} onClick={() => setFilter(v)} className={`rounded-lg px-3 py-2.5 ${filter === v ? "bg-fg/8" : "text-muted"}`}>{l}</button>
         ))}
       </div>
       {!data && <Skeleton className="mt-4 h-96" />}

@@ -18,7 +18,7 @@ const LINKS = [
 export function Logo() {
   const { settings } = useSite();
   return (
-    <Link to="/" className="flex min-w-0 items-center gap-2 font-display text-[0.95rem] font-extrabold uppercase tracking-tight">
+    <Link to="/" className="flex min-h-10 min-w-0 items-center gap-2 font-display text-[0.95rem] font-extrabold uppercase tracking-tight">
       <img src="/favicon.svg" alt="" className="size-7 shrink-0" />
       <span className="truncate">{settings.short_name || settings.business_name || "Hardware"}</span>
     </Link>
@@ -80,8 +80,8 @@ function Footer() {
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-1.5 px-4 py-2.5 text-xs text-muted sm:px-6 md:flex-row md:justify-between md:gap-4">
         <p className="text-center">© {new Date().getFullYear()} {settings.business_name}</p>
         <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-0.5 sm:gap-x-4">
-          <Link to="/about" className="hover:text-fg">About</Link>
-          <Link to="/contact" className="hover:text-fg">Contact</Link>
+          <Link to="/about" className="inline-flex min-h-8 items-center px-1 hover:text-fg">About</Link>
+          <Link to="/contact" className="inline-flex min-h-8 items-center px-1 hover:text-fg">Contact</Link>
           <span className="flex items-center gap-1">
             {SOCIALS.filter((s) => settings[s.key]).map((s) => (
               <a key={s.key} href={settings[s.key]} target="_blank" rel="noreferrer noopener" aria-label={s.label}

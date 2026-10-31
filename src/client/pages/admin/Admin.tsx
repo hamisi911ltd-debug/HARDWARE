@@ -123,7 +123,7 @@ function Overview() {
       </div>
       <div className="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-2">
         {manager && <Panel title="Sales, last 14 days" className="lg:col-span-2"><BarChart data={chart} format={money} caption="Sales per day for the last 14 days" /></Panel>}
-        <Panel title="Latest sales" action={<Link to="/admin/sales" className="text-xs font-medium text-brand hover:underline">View all</Link>}>
+        <Panel title="Latest sales" action={<Link to="/admin/sales" className="inline-flex min-h-8 items-center text-xs font-medium text-brand hover:underline">View all</Link>}>
           <ul className="divide-y divide-line">
             {!data.recentSales.length && <li className="py-2 text-sm text-muted">No sales yet.</li>}
             {data.recentSales.map((s: any) => (
@@ -136,7 +136,7 @@ function Overview() {
             ))}
           </ul>
         </Panel>
-        <Panel title="Low stock" action={<Link to="/admin/products?filter=low" className="text-xs font-medium text-brand hover:underline">View all</Link>}>
+        <Panel title="Low stock" action={<Link to="/admin/products?filter=low" className="inline-flex min-h-8 items-center text-xs font-medium text-brand hover:underline">View all</Link>}>
           <ul className="divide-y divide-line">
             {!data.lowStock.length && <li className="py-2 text-sm text-muted">Everything is well stocked.</li>}
             {data.lowStock.map((p: any) => (
@@ -150,7 +150,7 @@ function Overview() {
             ))}
           </ul>
         </Panel>
-        <Panel title="Latest enquiries" action={<Link to="/admin/enquiries" className="text-xs font-medium text-brand hover:underline">View all</Link>}>
+        <Panel title="Latest enquiries" action={<Link to="/admin/enquiries" className="inline-flex min-h-8 items-center text-xs font-medium text-brand hover:underline">View all</Link>}>
           <ul className="divide-y divide-line">
             {!data.recentEnquiries.length && <li className="py-2 text-sm text-muted">No enquiries yet.</li>}
             {data.recentEnquiries.map((e: any) => (
@@ -188,7 +188,7 @@ function Shell() {
   const guard = (min: Level, el: ReactElement) => (allowed(min) ? el : <Navigate to="/admin" replace />);
   const groups = NAV.map((g) => ({ ...g, items: g.items.filter((n) => allowed(n.min)) })).filter((g) => g.items.length);
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${isActive ? "bg-white/15 text-white" : "text-white/70 hover:text-white"}`;
+    `flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${isActive ? "bg-white/15 text-white" : "text-white/70 hover:text-white"}`;
   return (
     <div className="min-h-svh lg:grid lg:grid-cols-[15rem_1fr]">
       <aside className="on-dark sticky top-0 z-40 flex flex-col bg-ink lg:h-svh">
@@ -217,8 +217,8 @@ function Shell() {
         </nav>
         <div className="hidden space-y-0.5 border-t border-line p-3 lg:block">
           <p className="truncate px-3 text-xs text-muted">{user?.name} · <span className="capitalize">{user?.staff_role}</span></p>
-          <Link to="/" className="flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-sm text-white/70 hover:text-white"><ExternalLink className="size-4" /> View site</Link>
-          <button onClick={logout} className="flex w-full items-center gap-2.5 rounded-lg px-3 py-1.5 text-sm text-white/70 hover:text-white"><LogOut className="size-4" /> Log out</button>
+          <Link to="/" className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-white/70 hover:text-white"><ExternalLink className="size-4" /> View site</Link>
+          <button onClick={logout} className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-white/70 hover:text-white"><LogOut className="size-4" /> Log out</button>
         </div>
       </aside>
       <motion.main key={pathname} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="min-w-0 p-3 sm:p-6">

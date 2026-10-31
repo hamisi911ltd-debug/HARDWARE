@@ -17,6 +17,7 @@
     "db:demo:remote": "wrangler d1 execute hardware-hub --remote --file=db/demo.sql",
     "test:api": "node tests/api.test.mjs",
     "test:business": "node tests/business.test.mjs",
+    "test:responsive": "node tests/responsive.mjs",
     "test:ui": "node tests/ui.mjs",
     "deploy": "npm run build && wrangler deploy"
   },

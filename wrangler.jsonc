@@ -12,10 +12,12 @@
     {
       "binding": "DB",
       "database_name": "hardware-hub",
-      // Replace with the id printed by `wrangler d1 create hardware-hub` before deploying.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "7654e9ee-738e-4e4d-922c-69c70493b582",
       "migrations_dir": "db/migrations"
     }
   ],
-  "r2_buckets": [{ "binding": "UPLOADS", "bucket_name": "hardware-hub-uploads" }]
+  // Photo uploads need R2. Once it is enabled on the account, run
+  // `npx wrangler r2 bucket create hardware-hub-uploads` and add:
+  // "r2_buckets": [{ "binding": "UPLOADS", "bucket_name": "hardware-hub-uploads" }]
+  "observability": { "enabled": true }
 }

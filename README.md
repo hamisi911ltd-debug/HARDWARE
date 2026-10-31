@@ -41,16 +41,24 @@ Business details come from the company flyer. The phone numbers were read from a
 
 ## Deploy to Cloudflare
 
+Live at https://hardware-hub.johndrekuz.workers.dev. To deploy from scratch:
+
 ```
 npx wrangler login
 npx wrangler d1 create hardware-hub          # copy the database_id into wrangler.jsonc
-npx wrangler r2 bucket create hardware-hub-uploads
 npm run db:migrate:remote
-npm run db:seed:remote                       # optional: the sample catalog
+npm run db:seed:remote                       # the sample catalog
+npm run db:demo:remote                       # optional: sample sales, customers and purchases
 npx wrangler secret put ADMIN_EMAIL
 npx wrangler secret put ADMIN_PASSWORD
 npm run deploy
 ```
+
+After changing code, `npm run deploy` publishes it.
+
+**Photo uploads need R2.** Enable R2 in the Cloudflare dashboard (it asks for a payment method, and the free allowance is generous), then run `npx wrangler r2 bucket create hardware-hub-uploads`, uncomment the `r2_buckets` line in `wrangler.jsonc` and deploy again. Until then the site works fully, but adding photos to products by upload is switched off. The built-in stock photos are unaffected.
+
+For a custom domain, add it under the worker in the Cloudflare dashboard (Workers > hardware-hub > Settings > Domains).
 
 ## Tests
 
@@ -59,6 +67,7 @@ With `npm run dev` running in another terminal:
 ```
 npm run test:api       # permissions, stock rules, uploads, enquiries
 npm run test:business  # sales, stock, credit, returns, purchasing, cash, roles
+npm run test:responsive # every page at five widths: no sideways scroll, comfortable tap targets
 npm run test:ui        # real browser on desktop and phone sizes; screenshots go to tests/shots
 ```
 

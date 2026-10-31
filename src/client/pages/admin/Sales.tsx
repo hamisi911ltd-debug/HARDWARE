@@ -180,7 +180,7 @@ export function SaleDetail() {
   return (
     <div className="mx-auto max-w-3xl">
       <div className="no-print flex flex-wrap items-center justify-between gap-2">
-        <Link to="/admin/sales" className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-fg"><ArrowLeft className="size-4" /> All sales</Link>
+        <Link to="/admin/sales" className="inline-flex min-h-9 items-center gap-1.5 text-sm text-muted hover:text-fg"><ArrowLeft className="size-4" /> All sales</Link>
         <div className="flex flex-wrap gap-2">
           <button className="btn btn-ghost btn-sm" onClick={() => window.print()}><Printer className="size-4" /> Print</button>
           {s.customer_phone && (

@@ -75,7 +75,7 @@ function Hero() {
           </form>
           <div className="mt-3 flex flex-wrap gap-1.5">
             {QUICK.map((term) => (
-              <Link key={term} to={`/shop?q=${encodeURIComponent(term)}`} className="rounded-full border border-line bg-white/10 px-3 py-1 text-xs font-medium backdrop-blur transition-colors hover:bg-white/25">{term}</Link>
+              <Link key={term} to={`/shop?q=${encodeURIComponent(term)}`} className="rounded-full border border-line bg-white/10 px-3.5 py-2 text-xs font-medium backdrop-blur transition-colors hover:bg-white/25">{term}</Link>
             ))}
           </div>
           <dl className="mt-5 flex flex-wrap gap-2">

@@ -48,7 +48,7 @@ export function ProductCard({ product }: { product: Product }) {
       </Link>
       <div className="flex flex-1 flex-col p-3 sm:p-3.5">
         <p className="truncate text-xs text-muted">{product.brand || product.categoryName}</p>
-        <Link to={`/shop/${product.slug}`} className="mt-0.5 line-clamp-2 text-sm font-semibold leading-snug hover:text-brand sm:text-[0.95rem]">{product.name}</Link>
+        <Link to={`/shop/${product.slug}`} className="mt-0.5 line-clamp-2 min-h-8 py-1 text-sm font-semibold leading-snug hover:text-brand sm:text-[0.95rem]">{product.name}</Link>
         <div className="mt-auto flex items-end justify-between gap-2 pt-3">
           <p className="min-w-0 font-display text-sm font-bold leading-none sm:text-base">{money(product.price)}<span className="block truncate pt-1 font-sans text-xs font-normal text-muted">{product.price > 0 ? `per ${product.unit}` : `Sold per ${product.unit}`}</span></p>
           <button

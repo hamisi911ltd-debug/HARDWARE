@@ -127,7 +127,7 @@ export function ProductDetail() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-14 pt-24 sm:px-6 md:pt-28">
-      <Link to="/shop" className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted hover:text-fg"><ArrowLeft className="size-4" /> Back to shop</Link>
+      <Link to="/shop" className="mb-3 inline-flex min-h-9 items-center gap-1.5 text-sm text-muted hover:text-fg"><ArrowLeft className="size-4" /> Back to shop</Link>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-10">
         <Reveal><Gallery images={p.images} alt={p.name} /></Reveal>
         <Reveal delay={0.1}>

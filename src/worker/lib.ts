@@ -3,7 +3,8 @@ import { HTTPException } from "hono/http-exception";
 
 export type Env = {
   DB: D1Database;
-  UPLOADS: R2Bucket;
+  /** Absent until R2 is enabled on the Cloudflare account and the bucket is bound in wrangler.jsonc. */
+  UPLOADS?: R2Bucket;
   ADMIN_EMAIL?: string;
   ADMIN_PASSWORD?: string;
 };
@@ -21,7 +22,7 @@ export type User = {
 export type App = { Bindings: Env; Variables: { user: User | null } };
 export type Ctx = Context<App>;
 
-export const fail = (status: 400 | 401 | 403 | 404 | 409 | 413 | 429, message: string): never => {
+export const fail = (status: 400 | 401 | 403 | 404 | 409 | 413 | 429 | 503, message: string): never => {
   throw new HTTPException(status, { message });
 };
 

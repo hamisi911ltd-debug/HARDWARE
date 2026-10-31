@@ -194,7 +194,7 @@ export function Products() {
         </div>
         <div className="grid grid-cols-3 gap-1 rounded-xl bg-fg/6 p-1 text-xs font-semibold sm:flex">
           {[["all", "All"], ["low", "Low / out"], ["hidden", "Hidden"]].map(([v, l]) => (
-            <button key={v} onClick={() => setFilter(v)} className={`rounded-lg px-3 py-1.5 ${filter === v ? "bg-fg/8" : "text-muted"}`}>{l}</button>
+            <button key={v} onClick={() => setFilter(v)} className={`rounded-lg px-3 py-2.5 ${filter === v ? "bg-fg/8" : "text-muted"}`}>{l}</button>
           ))}
         </div>
       </div>

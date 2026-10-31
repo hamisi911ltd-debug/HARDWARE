@@ -149,6 +149,7 @@ const SIGNATURES: { ext: string; type: string; test: (b: Uint8Array) => boolean 
 
 app.post("/api/uploads", async (c) => {
   const user = requireUser(c);
+  if (!c.env.UPLOADS) return fail(503, "Photo uploads aren't switched on yet. Enable R2 in Cloudflare, then add the bucket in wrangler.jsonc.");
   await rateLimit(c, "upload", 60, 3600);
   const form = await c.req.formData().catch(() => null);
   const file = form?.get("file");
@@ -165,7 +166,7 @@ app.post("/api/uploads", async (c) => {
 
 app.get("/media/u/*", async (c) => {
   const key = new URL(c.req.url).pathname.replace(/^\/media\//, "");
-  const obj = await c.env.UPLOADS.get(decodeURIComponent(key));
+  const obj = await c.env.UPLOADS?.get(decodeURIComponent(key));
   if (!obj) return c.notFound();
   return new Response(obj.body, {
     headers: {

@@ -50,7 +50,7 @@ export function Tabs({ value, onChange, options }: { value: string; onChange: (v
     <div className="no-scrollbar flex max-w-full gap-1 overflow-x-auto rounded-xl bg-fg/6 p-1 text-xs font-semibold">
       {options.map(([v, l]) => (
         <button type="button" key={v} onClick={() => onChange(v)} aria-pressed={value === v}
-          className={`shrink-0 rounded-lg px-3 py-1.5 transition-colors ${value === v ? "bg-surface text-fg shadow-sm" : "text-muted hover:text-fg"}`}>{l}</button>
+          className={`shrink-0 rounded-lg px-3 py-2.5 transition-colors ${value === v ? "bg-surface text-fg shadow-sm" : "text-muted hover:text-fg"}`}>{l}</button>
       ))}
     </div>
   );
