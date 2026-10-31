@@ -1,10 +1,10 @@
 import { motion } from "motion/react";
 import {
   Axe, Blocks, BrickWall, Brush, Cable, Cog, Construction, Container, Cylinder, DoorOpen, Drill, Droplets, Fence, Footprints, Glasses, Grid3x3, Hammer, Hand, HardHat, Hexagon,
-  KeyRound, Layers, Lightbulb, Link2, Lock, MapPin, Mountain, Package, PaintBucket, PaintRoller, Pickaxe, Pipette, Plug, Plus, Ruler, Scissors, Shield, Shovel, Slice, Sprout, TreePine, Waves, Weight, Wind, Wrench, Zap, type LucideIcon,
+  KeyRound, Layers, Lightbulb, Link2, Lock, Mountain, Package, PaintBucket, PaintRoller, Pickaxe, Pipette, Plug, Plus, Ruler, Scissors, Shield, Shovel, Slice, Sprout, TreePine, Waves, Weight, Wind, Wrench, Zap, type LucideIcon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import type { Listing, Product } from "../lib/api";
+import type { Product } from "../lib/api";
 import { useMoney, useQuote, useToast } from "../lib/context";
 import { Availability } from "./ui";
 
@@ -59,25 +59,6 @@ export function ProductCard({ product }: { product: Product }) {
           </button>
         </div>
       </div>
-    </motion.article>
-  );
-}
-
-export function ListingCard({ listing }: { listing: Listing }) {
-  const money = useMoney();
-  return (
-    <motion.article whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 300, damping: 24 }} className="group h-full">
-      <Link to={`/marketplace/${listing.id}`} className="card flex h-full flex-col overflow-hidden rounded-2xl">
-        <div className="relative aspect-[4/3] overflow-hidden">
-          <img src={listing.images[0]} alt={listing.title} loading="lazy" className="size-full object-cover transition-transform duration-700 group-hover:scale-105" />
-          <span className="glass-strong absolute left-2.5 top-2.5 rounded-full px-2.5 py-1 text-xs font-medium capitalize">{listing.condition}</span>
-        </div>
-        <div className="flex flex-1 flex-col p-3 sm:p-4">
-          <h3 className="line-clamp-2 text-sm font-semibold leading-snug sm:text-base">{listing.title}</h3>
-          <p className="mt-1 flex items-center gap-1 text-xs text-muted"><MapPin className="size-3.5 shrink-0" /> {listing.location}</p>
-          <p className="mt-auto pt-3 font-display font-bold sm:text-lg">{money(listing.price)}</p>
-        </div>
-      </Link>
     </motion.article>
   );
 }

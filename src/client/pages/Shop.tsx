@@ -66,7 +66,7 @@ export function Shop() {
         <div className="glass-strong sticky top-[4.75rem] z-30 flex flex-col gap-2 rounded-2xl p-2 sm:flex-row sm:items-center">
           <div className="flex min-w-0 flex-1 items-center gap-2 px-2">
             <Search className="size-5 shrink-0 text-muted" />
-            <input value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search products" placeholder="Search cement, mabati, jembe..."
+            <input value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search products" placeholder="Search cement, mabati, panga..."
               className="min-w-0 flex-1 bg-transparent py-2 text-base outline-none placeholder:text-fg/60" />
           </div>
           <div className="grid grid-cols-2 gap-2 sm:flex">

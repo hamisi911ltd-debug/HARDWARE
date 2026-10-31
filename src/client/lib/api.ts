@@ -47,11 +47,6 @@ export type Product = {
   description: string; price: number; unit: string; featured: boolean; images: string[]; availability: "in" | "low" | "out";
 };
 
-export type Listing = {
-  id: string; title: string; categoryId: string; categoryName?: string; condition: "new" | "used"; price: number;
-  location: string; description: string; images: string[]; whatsapp: string; sellerName?: string; createdAt: number;
-};
-
 export type Category = { id: string; name: string; blurb: string; image: string; product_count: number };
 
-export type User = { id: string; email: string; name: string; phone: string; role: "admin" | "seller"; staff_role?: "owner" | "manager" | "cashier"; status: string };
+export type User = { id: string; email: string; name: string; phone: string; role: "admin"; staff_role?: "owner" | "manager" | "cashier"; status: string };

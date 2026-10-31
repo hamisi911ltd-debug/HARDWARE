@@ -38,10 +38,7 @@ admin.get("/overview", async (c) => {
         (SELECT COUNT(*) FROM products WHERE price = 0) AS unpriced,
         (SELECT COUNT(*) FROM products WHERE stock = 0) AS out_of_stock,
         (SELECT COUNT(*) FROM products WHERE stock > 0 AND stock <= low_stock_at) AS low_stock,
-        (SELECT COUNT(*) FROM enquiries WHERE status = 'new') AS new_enquiries,
-        (SELECT COUNT(*) FROM listings WHERE status = 'pending') AS pending_listings,
-        (SELECT COUNT(*) FROM listings WHERE status = 'approved') AS live_listings,
-        (SELECT COUNT(*) FROM users WHERE role = 'seller') AS sellers`,
+        (SELECT COUNT(*) FROM enquiries WHERE status = 'new') AS new_enquiries`,
     ),
     db.prepare("SELECT id, name, sku, stock, low_stock_at, unit, images FROM products WHERE stock <= low_stock_at ORDER BY stock ASC, name LIMIT 8"),
     db.prepare("SELECT id, kind, subject, name, phone, status, created_at FROM enquiries ORDER BY created_at DESC LIMIT 6"),
@@ -51,7 +48,7 @@ admin.get("/overview", async (c) => {
     ),
     db.prepare("SELECT created_at FROM enquiries WHERE created_at >= ?").bind(since),
     db.prepare(
-      `SELECT subject, COUNT(*) AS total FROM enquiries WHERE kind IN ('product', 'listing')
+      `SELECT subject, COUNT(*) AS total FROM enquiries WHERE kind IN ('product', 'quote')
        GROUP BY subject ORDER BY total DESC LIMIT 5`,
     ),
     db.prepare(
@@ -277,56 +274,6 @@ admin.delete("/enquiries/:id", async (c) => {
   return c.json({ ok: true });
 });
 
-/* ---------- Marketplace moderation and sellers ---------- */
-
-admin.get("/listings", async (c) => {
-  const { results } = await c.env.DB.prepare(
-    `SELECT l.*, c.name AS category_name, u.name AS seller_name, u.email AS seller_email FROM listings l
-     JOIN categories c ON c.id = l.category_id JOIN users u ON u.id = l.seller_id
-     ORDER BY CASE l.status WHEN 'pending' THEN 0 ELSE 1 END, l.created_at DESC LIMIT 500`,
-  ).all<any>();
-  return c.json({ listings: results.map((l) => ({ ...l, images: parseImages(l.images) })) });
-});
-
-admin.patch("/listings/:id", async (c) => {
-  const body = await readJson(c);
-  const status = oneOf(body.status, "Status", ["approved", "rejected", "pending"] as const);
-  const reason = status === "rejected" ? text(body.reason, "Reason", 3, 300) : "";
-  const res = await c.env.DB.prepare("UPDATE listings SET status=?, reject_reason=?, updated_at=? WHERE id=?")
-    .bind(status, reason, now(), c.req.param("id")).run();
-  if (!res.meta.changes) return fail(404, "Listing not found.");
-  return c.json({ ok: true });
-});
-
-admin.delete("/listings/:id", async (c) => {
-  await c.env.DB.prepare("DELETE FROM listings WHERE id = ?").bind(c.req.param("id")).run();
-  return c.json({ ok: true });
-});
-
-admin.get("/sellers", async (c) => {
-  const { results } = await c.env.DB.prepare(
-    `SELECT u.id, u.email, u.name, u.phone, u.status, u.created_at,
-       (SELECT COUNT(*) FROM listings l WHERE l.seller_id = u.id) AS listings,
-       (SELECT COUNT(*) FROM enquiries e WHERE e.seller_id = u.id) AS enquiries
-     FROM users u WHERE u.role = 'seller' ORDER BY u.created_at DESC LIMIT 500`,
-  ).all();
-  return c.json({ sellers: results });
-});
-
-admin.patch("/sellers/:id", async (c) => {
-  const body = await readJson(c);
-  const status = oneOf(body.status, "Status", ["active", "suspended"] as const);
-  const id = c.req.param("id");
-  const db = c.env.DB;
-  const [res] = await db.batch([
-    db.prepare("UPDATE users SET status=? WHERE id=? AND role='seller'").bind(status, id),
-    // Suspending logs the seller out immediately, not just at their next login.
-    ...(status === "suspended" ? [db.prepare("DELETE FROM sessions WHERE user_id=?").bind(id)] : []),
-  ]);
-  if (!res.meta.changes) return fail(404, "Seller not found.");
-  return c.json({ ok: true });
-});
-
 /* ---------- Categories ---------- */
 
 admin.post("/categories", async (c) => {
@@ -359,7 +306,7 @@ admin.put("/categories/:id", async (c) => {
 admin.delete("/categories/:id", async (c) => {
   const id = c.req.param("id");
   const used = await c.env.DB.prepare(
-    "SELECT (SELECT COUNT(*) FROM products WHERE category_id = ?1) + (SELECT COUNT(*) FROM listings WHERE category_id = ?1) AS n",
+    "SELECT COUNT(*) AS n FROM products WHERE category_id = ?",
   ).bind(id).first<{ n: number }>();
   if (used?.n) return fail(409, `This category is still used by ${used.n} item(s). Move them first.`);
   await c.env.DB.prepare("DELETE FROM categories WHERE id = ?").bind(id).run();

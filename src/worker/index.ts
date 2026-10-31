@@ -3,7 +3,6 @@ import { HTTPException } from "hono/http-exception";
 import admin from "./admin";
 import auth, { loadUser } from "./auth";
 import { countryCode, fail, getSetting, int, now, oneOf, parseImages, phone, rateLimit, readJson, requireUser, text, uuid, type App } from "./lib";
-import seller from "./seller";
 
 const app = new Hono<App>();
 
@@ -26,7 +25,6 @@ app.use("/api/*", async (c, next) => {
 });
 
 app.route("/api/auth", auth);
-app.route("/api/seller", seller);
 app.route("/api/admin", admin);
 
 type ProductRow = {
@@ -43,17 +41,6 @@ const publicProduct = (p: ProductRow, showPrices: boolean) => ({
   availability: p.stock <= 0 ? "out" : p.stock <= p.low_stock_at ? "low" : "in",
 });
 
-type ListingRow = {
-  id: string; title: string; category_id: string; category_name?: string; condition: string; price: number; location: string;
-  description: string; images: string; whatsapp: string; created_at: number; seller_name?: string;
-};
-
-const publicListing = (l: ListingRow) => ({
-  id: l.id, title: l.title, categoryId: l.category_id, categoryName: l.category_name, condition: l.condition, price: l.price,
-  location: l.location, description: l.description, images: parseImages(l.images), whatsapp: l.whatsapp,
-  sellerName: l.seller_name, createdAt: l.created_at,
-});
-
 app.get("/api/site", async (c) => {
   const db = c.env.DB;
   const [settings, categories, counts] = await db.batch<any>([
@@ -64,8 +51,7 @@ app.get("/api/site", async (c) => {
     ),
     db.prepare(
       `SELECT (SELECT COUNT(*) FROM products WHERE visible = 1) AS products,
-              (SELECT COUNT(*) FROM categories) AS categories,
-              (SELECT COUNT(*) FROM listings WHERE status = 'approved') AS listings`,
+              (SELECT COUNT(*) FROM categories) AS categories`,
     ),
   ]);
   return c.json({
@@ -108,31 +94,6 @@ app.get("/api/products/:slug", async (c) => {
   return c.json({ product: publicProduct(row, showPrices), related: related.results.map((p) => publicProduct(p, showPrices)) });
 });
 
-app.get("/api/listings", async (c) => {
-  const { q, category, condition } = c.req.query();
-  const where = ["l.status = 'approved'"];
-  const args: unknown[] = [];
-  if (q) { where.push("(l.title LIKE ? OR l.description LIKE ? OR l.location LIKE ?)"); args.push(`%${q}%`, `%${q}%`, `%${q}%`); }
-  if (category) { where.push("l.category_id = ?"); args.push(category); }
-  if (condition) { where.push("l.condition = ?"); args.push(condition); }
-  const { results } = await c.env.DB.prepare(
-    `SELECT l.*, c.name AS category_name, u.name AS seller_name FROM listings l
-     JOIN categories c ON c.id = l.category_id JOIN users u ON u.id = l.seller_id
-     WHERE ${where.join(" AND ")} AND u.status = 'active' ORDER BY l.created_at DESC LIMIT 200`,
-  ).bind(...args).all<ListingRow>();
-  return c.json({ listings: results.map(publicListing) });
-});
-
-app.get("/api/listings/:id", async (c) => {
-  const row = await c.env.DB.prepare(
-    `SELECT l.*, c.name AS category_name, u.name AS seller_name FROM listings l
-     JOIN categories c ON c.id = l.category_id JOIN users u ON u.id = l.seller_id
-     WHERE l.id = ? AND l.status = 'approved' AND u.status = 'active'`,
-  ).bind(c.req.param("id")).first<ListingRow>();
-  if (!row) return fail(404, "Listing not found.");
-  return c.json({ listing: publicListing(row) });
-});
-
 app.post("/api/enquiries", async (c) => {
   const body = await readJson(c);
   // Bots fill the hidden "website" field; accept quietly and store nothing.
@@ -140,15 +101,13 @@ app.post("/api/enquiries", async (c) => {
   await rateLimit(c, "enquiry", 15, 3600);
 
   const db = c.env.DB;
-  const kind = oneOf(body.kind, "Enquiry type", ["general", "product", "listing", "quote"] as const);
+  const kind = oneOf(body.kind, "Enquiry type", ["general", "product", "quote"] as const);
   const name = text(body.name, "Your name", 2, 80);
   const tel = phone(body.phone, "Your phone number", await countryCode(c));
   const message = typeof body.message === "string" ? body.message.trim().slice(0, 2000) : "";
 
   let subject = "General enquiry";
   let productId: string | null = null;
-  let listingId: string | null = null;
-  let sellerId: string | null = null;
   let items: { id: string; name: string; qty: number }[] = [];
 
   if (kind === "product") {
@@ -156,13 +115,6 @@ app.post("/api/enquiries", async (c) => {
     if (!p) return fail(404, "That product is no longer available.");
     productId = p.id;
     subject = p.name;
-  } else if (kind === "listing") {
-    const l = await db.prepare("SELECT l.id, l.title, l.seller_id FROM listings l JOIN users u ON u.id = l.seller_id WHERE l.id = ? AND l.status = 'approved' AND u.status = 'active'").bind(String(body.listingId ?? ""))
-      .first<{ id: string; title: string; seller_id: string }>();
-    if (!l) return fail(404, "That listing is no longer available.");
-    listingId = l.id;
-    sellerId = l.seller_id;
-    subject = l.title;
   } else if (kind === "quote") {
     const raw = Array.isArray(body.items) ? (body.items as { id: unknown; qty: unknown }[]).slice(0, 50) : [];
     if (!raw.length) return fail(400, "Your enquiry list is empty.");
@@ -179,9 +131,9 @@ app.post("/api/enquiries", async (c) => {
   const id = uuid();
   const t = now();
   await db.prepare(
-    `INSERT INTO enquiries (id, kind, product_id, listing_id, seller_id, subject, items, name, phone, message, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  ).bind(id, kind, productId, listingId, sellerId, subject, JSON.stringify(items), name, tel, message, t, t).run();
+    `INSERT INTO enquiries (id, kind, product_id, subject, items, name, phone, message, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  ).bind(id, kind, productId, subject, JSON.stringify(items), name, tel, message, t, t).run();
   return c.json({ ok: true, id }, 201);
 });
 

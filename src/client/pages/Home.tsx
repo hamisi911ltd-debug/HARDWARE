@@ -1,10 +1,10 @@
 import { motion, useInView, useMotionValue, useReducedMotion, useScroll, useTransform, animate } from "motion/react";
-import { ArrowRight, ClipboardList, MessageCircle, Search, Store } from "lucide-react";
+import { ArrowRight, ClipboardList, MessageCircle, Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ListingCard, ProductCard } from "../components/Cards";
+import { ProductCard } from "../components/Cards";
 import { Reveal, Skeleton, useTitle } from "../components/ui";
-import { useFetch, type Listing, type Product } from "../lib/api";
+import { useFetch, type Product } from "../lib/api";
 import { useSite } from "../lib/context";
 import { SERVICES } from "../lib/services";
 
@@ -19,7 +19,7 @@ function Counter({ to }: { to: number }) {
   return <motion.span ref={ref}>{shown}</motion.span>;
 }
 
-const QUICK = ["Cement", "Mabati", "Y12", "Jembe", "Crown", "Kenpoly"];
+const QUICK = ["Cement", "Mabati", "Y12", "Panga", "Crown", "Padlock"];
 
 function Hero() {
   const { settings, counts } = useSite();
@@ -69,7 +69,7 @@ function Hero() {
           <p className="mt-5 max-w-xl text-base text-fg/90 sm:text-lg">{settings.hero_subtitle}</p>
           <form onSubmit={search} role="search" className="glass mt-6 flex max-w-xl items-center gap-2 rounded-2xl p-2">
             <Search className="ml-2 size-5 shrink-0 text-muted" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search products" placeholder="Search cement, mabati, jembe..."
+            <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search products" placeholder="Search cement, mabati, panga..."
               className="min-w-0 flex-1 bg-transparent py-1.5 text-base outline-none placeholder:text-fg/70" />
             <button className="btn btn-primary btn-sm !min-h-10 shrink-0">Search</button>
           </form>
@@ -261,34 +261,6 @@ function HowItWorks() {
   );
 }
 
-function MarketTeaser() {
-  const { data } = useFetch<{ listings: Listing[] }>("/api/listings");
-  return (
-    <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 md:pb-16">
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_2fr]">
-        <Reveal className="h-full">
-          <div className="on-dark relative isolate flex h-full min-h-72 flex-col justify-end overflow-hidden rounded-3xl p-5 sm:p-6">
-            <video src="/media/hammer.mp4" poster="/images/hammer-poster.webp" autoPlay muted loop playsInline preload="metadata" className="absolute inset-0 -z-20 size-full object-cover" />
-            <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/55 to-ink/15" />
-            <Store className="size-7 text-brand" />
-            <h2 className="display mt-3 text-3xl">The marketplace</h2>
-            <p className="mt-2 text-sm text-fg/90">Spare materials, used tools or leftover stock. List them here and buyers will message you on WhatsApp.</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Link to="/sell" className="btn btn-primary btn-sm">Start selling</Link>
-              <Link to="/marketplace" className="btn btn-ghost btn-sm">Browse items</Link>
-            </div>
-          </div>
-        </Reveal>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
-          {data?.listings.slice(0, 3).map((l, i) => (
-            <Reveal key={l.id} delay={i * 0.08} className={i === 2 ? "hidden md:block" : ""}><ListingCard listing={l} /></Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function AboutStrip() {
   const { settings } = useSite();
   const ref = useRef<HTMLDivElement>(null);
@@ -317,7 +289,7 @@ function AboutStrip() {
 
 export default function Home() {
   const { settings } = useSite();
-  useTitle(`${settings.business_name || "Water Line Hardware"} | Construction tools and building materials in Kenya`);
+  useTitle(`${settings.business_name || "Hardware"} | Construction tools and building materials in Kenya`);
   return (
     <>
       <Hero />
@@ -326,7 +298,6 @@ export default function Home() {
       <BuildStages />
       <ServicesStrip />
       <HowItWorks />
-      <MarketTeaser />
       <AboutStrip />
     </>
   );

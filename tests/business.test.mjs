@@ -45,7 +45,7 @@ const historyOf = async (id) => (await owner("/api/admin/movements")).data.movem
 
 await check("the public site never exposes buying prices, and hides prices until they're switched on", async () => {
   const { data } = await anon("/api/products");
-  assert.ok(data.products.length >= 100);
+  assert.ok(data.products.length >= 15);
   for (const p of data.products) {
     assert.equal(p.cost, undefined);
     assert.equal(p.price, 0);

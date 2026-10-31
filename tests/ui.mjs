@@ -36,7 +36,7 @@ async function scrollThrough(page) {
 
 const noOverflow = (page) => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
 
-const ROUTES = [["home", "/"], ["shop", "/shop"], ["product", "/shop/water-pump"], ["services", "/services"], ["market", "/marketplace"], ["listing", "/marketplace/l01"], ["about", "/about"], ["contact", "/contact"], ["sell", "/sell"]];
+const ROUTES = [["home", "/"], ["shop", "/shop"], ["product", "/shop/water-storage-tank"], ["services", "/services"], ["about", "/about"], ["contact", "/contact"]];
 
 for (const [label, viewport] of [["desktop", { width: 1440, height: 900 }], ["mobile", { width: 390, height: 844 }], ["small", { width: 320, height: 640 }]]) {
   const { ctx, page } = await newPage(viewport);
@@ -70,7 +70,7 @@ for (const [label, viewport] of [["desktop", { width: 1440, height: 900 }], ["mo
 const buyer = `UI Buyer ${Date.now()}`;
 {
   const { ctx, page } = await newPage({ width: 390, height: 844 });
-  await page.goto(`${BASE}/shop/water-pump`);
+  await page.goto(`${BASE}/shop/water-storage-tank`);
   await page.locator("button.btn-whatsapp", { hasText: "Enquire on WhatsApp" }).click();
   const dialog = page.locator("dialog[open]");
   await dialog.getByRole("button", { name: "Continue on WhatsApp" }).click();
@@ -82,7 +82,7 @@ const buyer = `UI Buyer ${Date.now()}`;
   const url = popup.url() === "about:blank" ? (await popup.waitForURL(/.+/), popup.url()) : popup.url();
   const text = decodeURIComponent((url.split("text=")[1] ?? "").replace(/\+/g, " "));
   assert.match(url, /wa\.me|whatsapp/);
-  assert.ok(text.includes(buyer) && text.includes("Water Pump") && text.includes("Thika"), `whatsapp text: ${text}`);
+  assert.ok(text.includes(buyer) && text.includes("Kenpoly Water Tank") && text.includes("Thika"), `whatsapp text: ${text}`);
   console.log("  ok  enquiry opens WhatsApp with the message");
   await popup.close();
 
@@ -106,33 +106,6 @@ const buyer = `UI Buyer ${Date.now()}`;
   await ctx.close();
 }
 
-// Seller signs up and posts a real photo; admin approves it through the UI.
-const title = `UI Listing ${Date.now()}`;
-{
-  const { ctx, page } = await newPage({ width: 390, height: 844 });
-  await page.goto(`${BASE}/sell`);
-  await page.getByLabel("Your name").fill("UI Seller");
-  await page.getByLabel("WhatsApp number").fill("0712345678");
-  await page.getByLabel("Email").fill(`ui${Date.now()}@example.com`);
-  await page.getByLabel("Password").fill("password123");
-  await page.getByRole("button", { name: "Create account" }).last().click();
-  await page.getByRole("button", { name: "New listing" }).click();
-  const d = page.locator("dialog[open]");
-  await d.locator('input[type=file]').setInputFiles("public/images/gate-valve.webp");
-  await d.getByRole("button", { name: "Remove photo 1" }).waitFor();
-  await d.getByLabel("Title").fill(title);
-  await d.getByLabel("Category").selectOption("hand-tools");
-  await d.getByLabel("Price").fill("700");
-  await d.getByLabel("Location").fill("Nairobi");
-  await d.getByLabel("Description").fill("A good hammer, barely used.");
-  await page.screenshot({ path: `${SHOTS}/mobile-seller-form.png` });
-  await d.getByRole("button", { name: "Submit for review" }).click();
-  await page.getByText("Awaiting review").waitFor();
-  await page.screenshot({ path: `${SHOTS}/mobile-seller-dashboard.png`, fullPage: true });
-  console.log("  ok  seller posts a listing with a photo");
-  await ctx.close();
-}
-
 for (const [label, viewport] of [["desktop", { width: 1440, height: 900 }], ["mobile", { width: 390, height: 844 }]]) {
   const { ctx, page } = await newPage(viewport);
   await page.goto(`${BASE}/admin`);
@@ -140,7 +113,7 @@ for (const [label, viewport] of [["desktop", { width: 1440, height: 900 }], ["mo
   await page.getByLabel("Password").fill(vars.ADMIN_PASSWORD);
   await page.getByRole("button", { name: "Log in" }).click();
   await page.getByText("New enquiries").waitFor();
-  for (const [name, path] of [["overview", ""], ["pos", "/pos"], ["sales", "/sales"], ["customers", "/customers"], ["products", "/products"], ["prices", "/prices"], ["stock-take", "/stock-take"], ["movements", "/movements"], ["purchases", "/purchases"], ["suppliers", "/suppliers"], ["expenses", "/expenses"], ["reports", "/reports"], ["close", "/close"], ["enquiries", "/enquiries"], ["marketplace", "/marketplace"], ["sellers", "/sellers"], ["categories", "/categories"], ["settings", "/settings"], ["staff", "/staff"], ["activity", "/activity"]]) {
+  for (const [name, path] of [["overview", ""], ["pos", "/pos"], ["sales", "/sales"], ["customers", "/customers"], ["products", "/products"], ["prices", "/prices"], ["stock-take", "/stock-take"], ["movements", "/movements"], ["purchases", "/purchases"], ["suppliers", "/suppliers"], ["expenses", "/expenses"], ["reports", "/reports"], ["close", "/close"], ["enquiries", "/enquiries"], ["categories", "/categories"], ["settings", "/settings"], ["staff", "/staff"], ["activity", "/activity"]]) {
     await page.goto(`${BASE}/admin${path}`);
     await page.waitForTimeout(700);
     const over = await noOverflow(page);
@@ -167,12 +140,6 @@ for (const [label, viewport] of [["desktop", { width: 1440, height: 900 }], ["mo
     await page.goto(`${BASE}/admin/enquiries`);
     await page.getByText(buyer).first().waitFor();
     console.log("  ok  enquiry appears in the admin inbox");
-
-    await page.goto(`${BASE}/admin/marketplace`);
-    const row = page.locator("article", { hasText: title });
-    await row.getByRole("button", { name: "Approve" }).click();
-    await row.getByText("Live").waitFor();
-    console.log("  ok  admin approves a listing");
 
     await page.goto(`${BASE}/admin/products`);
     await page.getByRole("button", { name: /in stock/ }).first().click();

@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
-import { countryCode, fail, hex, now, phone, rateLimit, readJson, requireUser, sha256, text, uuid, type App, type Ctx, type User } from "./lib";
+import { fail, hex, now, rateLimit, readJson, requireUser, sha256, text, uuid, type App, type Ctx, type User } from "./lib";
 
 const COOKIE = "hh_session";
 const SESSION_DAYS = 30;
@@ -73,27 +73,6 @@ const auth = new Hono<App>();
 auth.get("/me", (c) => {
   const user = c.get("user");
   return c.json({ user: user && user.status === "active" ? user : null });
-});
-
-auth.post("/register", async (c) => {
-  await rateLimit(c, "register", 8, 3600);
-  const body = await readJson(c);
-  const mail = email(body.email);
-  const name = text(body.name, "Name", 2, 80);
-  const password = text(body.password, "Password", 8, 200);
-  const tel = phone(body.phone, "WhatsApp number", await countryCode(c));
-  // The admin address is reserved so nobody can squat it before the owner's first login.
-  if (mail === c.env.ADMIN_EMAIL?.toLowerCase()) fail(409, "That email can't be used for a seller account.");
-  const exists = await c.env.DB.prepare("SELECT 1 FROM users WHERE email = ?").bind(mail).first();
-  if (exists) fail(409, "An account with that email already exists. Try logging in.");
-  const id = uuid();
-  await c.env.DB.prepare(
-    "INSERT INTO users (id, email, name, phone, role, password_hash, created_at) VALUES (?, ?, ?, ?, 'seller', ?, ?)",
-  )
-    .bind(id, mail, name, tel, await hashPassword(password), now())
-    .run();
-  await startSession(c, id);
-  return c.json({ user: { id, email: mail, name, phone: tel, role: "seller", staff_role: "owner", status: "active" } }, 201);
 });
 
 auth.post("/login", async (c) => {

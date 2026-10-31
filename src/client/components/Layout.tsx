@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "motion/react";
-import { ClipboardList, Wrench, Hammer, Home, Info, Mail, Minus, Plus, Store, Trash2, X } from "lucide-react";
+import { ClipboardList, Wrench, Hammer, Home, Info, Mail, Minus, Plus, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { useMoney, useQuote, useSite } from "../lib/context";
@@ -11,7 +11,6 @@ const LINKS = [
   { to: "/", label: "Home", Icon: Home },
   { to: "/shop", label: "Shop", Icon: Wrench },
   { to: "/services", label: "Services", Icon: Hammer },
-  { to: "/marketplace", label: "Market", Icon: Store },
   { to: "/about", label: "About", Icon: Info },
   { to: "/contact", label: "Contact", Icon: Mail },
 ];
@@ -21,7 +20,7 @@ export function Logo() {
   return (
     <Link to="/" className="flex min-w-0 items-center gap-2 font-display text-[0.95rem] font-extrabold uppercase tracking-tight">
       <img src="/favicon.svg" alt="" className="size-7 shrink-0" />
-      <span className="truncate">{settings.short_name || settings.business_name || "Water Line"}</span>
+      <span className="truncate">{settings.short_name || settings.business_name || "Hardware"}</span>
     </Link>
   );
 }
@@ -38,7 +37,7 @@ function TopNav() {
             <NavLink key={l.to} to={l.to} end={l.to === "/"} className={({ isActive }) =>
               `rounded-lg px-3 py-2 text-sm font-medium transition-colors ${isActive ? "bg-fg/8 text-fg" : "text-fg/80 hover:text-fg"}`
             }>
-              {l.label === "Market" ? "Marketplace" : l.label}
+              {l.label}
             </NavLink>
           ))}
         </div>
@@ -50,7 +49,6 @@ function TopNav() {
               <span className="absolute -right-1.5 -top-1.5 grid size-5 place-items-center rounded-full bg-red text-[0.68rem] font-bold text-white">{count}</span>
             )}
           </button>
-          <Link to="/sell" className="btn btn-red btn-sm hidden md:inline-flex">Sell on our market</Link>
         </div>
       </nav>
     </div>
@@ -61,7 +59,7 @@ function MobileTabs() {
   return (
     <nav aria-label="Mobile" className="fixed inset-x-3 z-50 md:hidden" style={{ bottom: "calc(0.6rem + env(safe-area-inset-bottom))" }}>
       <div className="glass-strong grid grid-cols-5 rounded-2xl p-1">
-        {LINKS.filter((l) => l.to !== "/about").map((l) => (
+        {LINKS.map((l) => (
           <NavLink key={l.to} to={l.to} end={l.to === "/"} className={({ isActive }) =>
             `flex flex-col items-center gap-0.5 rounded-xl py-1.5 text-[0.68rem] font-medium transition-colors ${isActive ? "bg-fg/8 text-brand" : "text-fg/75"}`
           }>
@@ -84,8 +82,6 @@ function Footer() {
         <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-0.5 sm:gap-x-4">
           <Link to="/about" className="hover:text-fg">About</Link>
           <Link to="/contact" className="hover:text-fg">Contact</Link>
-          <Link to="/sell" className="hover:text-fg">Sell</Link>
-          <Link to="/admin" className="hover:text-fg">Staff</Link>
           <span className="flex items-center gap-1">
             {SOCIALS.filter((s) => settings[s.key]).map((s) => (
               <a key={s.key} href={settings[s.key]} target="_blank" rel="noreferrer noopener" aria-label={s.label}

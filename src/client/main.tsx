@@ -6,12 +6,10 @@ import { PublicLayout } from "./components/Layout";
 import { AuthProvider, QuoteProvider, SiteProvider, ToastProvider } from "./lib/context";
 import Home from "./pages/Home";
 import { About, Contact, Services } from "./pages/Info";
-import { ListingDetail, Marketplace } from "./pages/Marketplace";
 import { ProductDetail, Shop } from "./pages/Shop";
 import "./styles.css";
 
 // Split out so public visitors never download the dashboards.
-const Sell = lazy(() => import("./pages/Sell"));
 const Admin = lazy(() => import("./pages/admin/Admin"));
 
 function NotFound() {
@@ -41,12 +39,9 @@ createRoot(document.getElementById("root")!).render(
                       <Route index element={<Home />} />
                       <Route path="shop" element={<Shop />} />
                       <Route path="shop/:slug" element={<ProductDetail />} />
-                      <Route path="marketplace" element={<Marketplace />} />
-                      <Route path="marketplace/:id" element={<ListingDetail />} />
                       <Route path="services" element={<Services />} />
                       <Route path="about" element={<About />} />
                       <Route path="contact" element={<Contact />} />
-                      <Route path="sell" element={<Sell />} />
                       <Route path="*" element={<NotFound />} />
                     </Route>
                     <Route path="admin/*" element={<Admin />} />

@@ -7,12 +7,12 @@ export type Settings = Record<string, string>;
 type Site = {
   settings: Settings;
   categories: Category[];
-  counts: { products: number; categories: number; listings: number };
+  counts: { products: number; categories: number };
   ready: boolean;
   reload: () => Promise<void>;
 };
 
-const empty = { settings: {}, categories: [], counts: { products: 0, categories: 0, listings: 0 } };
+const empty = { settings: {}, categories: [], counts: { products: 0, categories: 0 } };
 const SiteContext = createContext<Site>({ ...empty, ready: false, reload: async () => {} });
 
 export function SiteProvider({ children }: { children: ReactNode }) {

@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { AlertTriangle, BarChart3, Calculator, ClipboardCheck, ClipboardList, ExternalLink, FolderTree, History, LayoutDashboard, LogOut, MessageSquare, Package, Plus, Receipt, ScrollText, Settings as SettingsIcon, ShoppingCart, Store, Tags, Truck, UserCog, Users, Wallet } from "lucide-react";
+import { AlertTriangle, BarChart3, Calculator, ClipboardCheck, ClipboardList, ExternalLink, FolderTree, History, LayoutDashboard, LogOut, MessageSquare, Package, Plus, Receipt, ScrollText, Settings as SettingsIcon, ShoppingCart, Tags, Truck, UserCog, Users, Wallet } from "lucide-react";
 import { useEffect, type ReactElement } from "react";
 import { Link, NavLink, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { BarChart, fmtTime, nairobiDay, PageTitle, Panel, Stat, useAct, useKes } from "../../components/admin";
@@ -8,7 +8,7 @@ import { Logo } from "../../components/Layout";
 import { Skeleton, useTitle } from "../../components/ui";
 import { api, useFetch } from "../../lib/api";
 import { useAuth, useSite } from "../../lib/context";
-import { Categories, Enquiries, Listings, Sellers, Settings } from "./Manage";
+import { Categories, Enquiries, Settings } from "./Manage";
 import { Customers, Staff, Suppliers } from "./People";
 import { Pos } from "./Pos";
 import { Expenses, Purchases } from "./Purchasing";
@@ -44,8 +44,6 @@ const NAV: { group: string; items: { to: string; label: string; Icon: typeof Pac
     { to: "/admin/close", label: "Close the day", Icon: Calculator, min: "manager" },
   ] },
   { group: "Website", items: [
-    { to: "/admin/marketplace", label: "Marketplace", Icon: Store, badge: "pending_listings", min: "manager" },
-    { to: "/admin/sellers", label: "Sellers", Icon: UserCog, min: "manager" },
     { to: "/admin/settings", label: "Settings", Icon: SettingsIcon, min: "owner" },
   ] },
   { group: "Team", items: [
@@ -122,7 +120,6 @@ function Overview() {
         {manager && <Stat label="Stock at buying price" value={money(t.stock_value)} note={`${t.units.toLocaleString()} units, ${t.products} products`} />}
         <Stat label="Needs restocking" value={t.low_stock + t.out_of_stock} note={`${t.out_of_stock} out, ${t.low_stock} low`} tone={t.out_of_stock ? "bad" : t.low_stock ? "warn" : "good"} />
         <Stat label="New enquiries" value={t.new_enquiries} note={`${m.open_quotes} quotes waiting`} />
-        {manager && <Stat label="Listings to review" value={t.pending_listings} note={`${t.live_listings} live, ${t.sellers} sellers`} />}
       </div>
       <div className="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-2">
         {manager && <Panel title="Sales, last 14 days" className="lg:col-span-2"><BarChart data={chart} format={money} caption="Sales per day for the last 14 days" /></Panel>}
@@ -242,8 +239,6 @@ function Shell() {
           <Route path="expenses" element={guard("manager", <Expenses />)} />
           <Route path="reports" element={guard("manager", <Reports />)} />
           <Route path="close" element={guard("manager", <DayClose />)} />
-          <Route path="marketplace" element={guard("manager", <Listings />)} />
-          <Route path="sellers" element={guard("manager", <Sellers />)} />
           <Route path="settings" element={guard("owner", <Settings />)} />
           <Route path="staff" element={guard("owner", <Staff />)} />
           <Route path="activity" element={guard("manager", <Activity />)} />
@@ -266,7 +261,7 @@ export default function Admin() {
         <h1 className="display mb-5 text-2xl">Staff login</h1>
         {user ? (
           <div className="space-y-3">
-            <p className="text-sm text-fg/85">You're logged in as a seller, which doesn't have admin access.</p>
+            <p className="text-sm text-fg/85">This account doesn't have staff access.</p>
             <button className="btn btn-ghost w-full" onClick={logout}>Log out</button>
           </div>
         ) : <AuthForm allowRegister={false} />}

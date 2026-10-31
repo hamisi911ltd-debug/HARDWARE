@@ -5,15 +5,12 @@ import { WhatsAppIcon } from "./icons";
 import { ErrorNote, Field, Modal } from "./ui";
 
 export type EnquiryTarget = {
-  kind: "general" | "product" | "listing" | "quote";
+  kind: "general" | "product" | "quote";
   title: string;
   /** First lines of the WhatsApp message, for example the product and its price. */
   summary?: string;
   productId?: string;
-  listingId?: string;
   items?: { id: string; qty: number }[];
-  /** The seller's number for marketplace enquiries. Defaults to the shop's WhatsApp. */
-  whatsapp?: string;
 };
 
 export function EnquiryDialog({ target, onClose, onSent }: { target: EnquiryTarget | null; onClose: () => void; onSent?: () => void }) {
@@ -45,12 +42,12 @@ export function EnquiryDialog({ target, onClose, onSent }: { target: EnquiryTarg
       keepalive: true,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        kind: target.kind, productId: target.productId, listingId: target.listingId, items: target.items,
+        kind: target.kind, productId: target.productId, items: target.items,
         name: name.trim(), phone: tel, message: message.trim(), website,
       }),
     }).catch(() => {});
 
-    openWhatsApp(waLink(target.whatsapp || settings.whatsapp || "", lines.join("\n\n")));
+    openWhatsApp(waLink(settings.whatsapp || "", lines.join("\n\n")));
     setMessage("");
     onSent?.();
     onClose();

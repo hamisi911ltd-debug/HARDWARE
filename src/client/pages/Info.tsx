@@ -11,7 +11,7 @@ import { SERVICES } from "../lib/services";
 const OFFER = [
   { Icon: Wrench, title: "A general hardware", text: "Construction tools, building materials, paint, electrical and plumbing supplies under one roof." },
   { Icon: Hammer, title: "More than a decade", text: "Over ten years of experience in plumbing systems, with installation, construction, repair and maintenance services." },
-  { Icon: Store, title: "A local marketplace", text: "A place to sell surplus materials and used tools, with every listing reviewed before it goes live." },
+  { Icon: Store, title: "Services as well", text: "We install, construct, repair and maintain, so one team can handle the whole job." },
 ];
 
 const GALLERY = [
@@ -23,10 +23,10 @@ const GALLERY = [
 
 export function About() {
   const { settings } = useSite();
-  useTitle(`About | ${settings.short_name ?? "Water Line"}`);
+  useTitle(`About | ${settings.short_name || "Hardware"}`);
   return (
     <>
-      <PageHeader eyebrow="About us" title={`Meet ${settings.short_name ?? "Water Line"}`} intro={settings.about} image="/images/crew.webp" />
+      <PageHeader eyebrow="About us" title={`Meet ${settings.short_name || "Hardware"}`} intro={settings.about} image="/images/crew.webp" />
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         <div className="grid gap-3 md:grid-cols-3 md:gap-4">
           {OFFER.map((o, i) => (
@@ -62,7 +62,7 @@ export function About() {
 
 export function Services() {
   const { settings } = useSite();
-  useTitle(`Services | ${settings.short_name ?? "Water Line"}`);
+  useTitle(`Services | ${settings.short_name || "Hardware"}`);
   const [target, setTarget] = useState<EnquiryTarget | null>(null);
   return (
     <>
@@ -90,7 +90,7 @@ export function Services() {
 
 export function Contact() {
   const { settings } = useSite();
-  useTitle(`Contact | ${settings.short_name ?? "Water Line"}`);
+  useTitle(`Contact | ${settings.short_name || "Hardware"}`);
   const [target, setTarget] = useState<EnquiryTarget | null>(null);
   const rows = [
     { Icon: MapPin, label: "Visit", value: settings.address, href: settings.map_url },
